@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  lecture-12-db:
+    image: mysql:8.3
+    container_name: lecture-12-db
+    hostname: lecture-12-db
+    environment:
+      - MYSQL_ROOT_PASSWORD=Pooph4oo
+      - MYSQL_USER=lecture_12
+      - MYSQL_PASSWORD=Eeb4meij
+      - MYSQL_DATABASE=lecture_12
+    volumes:
+      - $PWD/docker/config/mysql/:/etc/mysql/conf.d/:ro
+      - lecture_12_db_data:/var/lib/mysql
+    ports:
+      - "127.0.0.1:33048:3306"
+
+volumes:
+  lecture_12_db_data:
