@@ -1,0 +1,23 @@
+.cat-post-container {
+    border-radius: 5px;
+    background-color: #f2f2f2;
+    padding: 20px;
+    width: 800px;
+    margin: 20px auto;
+    box-shadow: 0 2px 3px -1px #808080;
+}
+
+.cat-post-image {
+    width: 800px;
+    object-fit: contain;
+    border-radius: 4px;
+}
+
+.cat-post-description {
+    font-size: 14pt;
+}
+
+.cat-post-metadata {
+    font-style: italic;
+    color: #606060;
+}
