@@ -3,26 +3,32 @@ declare(strict_types=1);
 
 namespace App\Database;
 
-class TransactionalExecutor
+readonly class TransactionalExecutor
 {
-    private Connection $connection;
-
-    public function __construct(Connection $connection)
+    public function __construct(private Connection $connection)
     {
-        $this->connection = $connection;
     }
 
     /**
-     * Метод выполняет переданную функцию в транзакции и под именованной блокировкой, в конце освобождая блокировку.
+     * Метод выполняет переданную функцию внутри открытой транзакции, в конце вызывая COMMIT либо ROLLBACK.
      *
-     * @param string $lockName - название именованной блокировки
-     * @param int $timeoutSeconds - максимальное время ожидания блокировки
-     * @param \Closure $action - функция, которую нужно выполнить
+     * @param callable $action - функция, которую нужно выполнить
      * @return mixed|void
      */
-    public function doWithTransactionAndLock(string $lockName, int $timeoutSeconds, \Closure $action)
+    public function doWithTransaction(callable $action)
     {
-        return $this->doWithTransaction(fn() => $this->doWithLock($lockName, $timeoutSeconds, $action));
+        $this->connection->beginTransaction();
+        try
+        {
+            $result = $action();
+            $this->connection->commit();
+            return $result;
+        }
+        catch (\Throwable $exception)
+        {
+            $this->connection->rollBack();
+            throw $exception;
+        }
     }
 
     /**
@@ -30,10 +36,10 @@ class TransactionalExecutor
      *
      * @param string $lockName - название именованной блокировки
      * @param int $timeoutSeconds - максимальное время ожидания блокировки
-     * @param \Closure $action - функция, которую нужно выполнить
+     * @param callable $action - функция, которую нужно выполнить
      * @return void
      */
-    public function doWithLock(string $lockName, int $timeoutSeconds, \Closure $action)
+    public function doWithLock(string $lockName, int $timeoutSeconds, callable $action)
     {
         $lock = new DatabaseLock($this->connection, $lockName, $timeoutSeconds);
         $lock->lock();
@@ -48,31 +54,15 @@ class TransactionalExecutor
     }
 
     /**
-     * Метод выполняет переданную функцию внутри открытой транзакции, в конце вызывая COMMIT либо ROLLBACK.
+     * Метод выполняет переданную функцию в транзакции и под именованной блокировкой, в конце освобождая блокировку.
      *
-     * @param \Closure $action - функция, которую нужно выполнить
+     * @param string $lockName - название именованной блокировки
+     * @param int $timeoutSeconds - максимальное время ожидания блокировки
+     * @param callable $action - функция, которую нужно выполнить
      * @return mixed|void
      */
-    public function doWithTransaction(\Closure $action)
+    public function doWithTransactionAndLock(string $lockName, int $timeoutSeconds, callable $action)
     {
-        $this->connection->beginTransaction();
-        $commit = false;
-        try
-        {
-            $result = $action();
-            $commit = true;
-            return $result;
-        }
-        finally
-        {
-            if ($commit)
-            {
-                $this->connection->commit();
-            }
-            else
-            {
-                $this->connection->rollBack();
-            }
-        }
+        return $this->doWithTransaction(fn() => $this->doWithLock($lockName, $timeoutSeconds, $action));
     }
 }
