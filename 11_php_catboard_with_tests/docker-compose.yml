@@ -14,7 +14,7 @@ services:
       - $PWD/docker/config/mysql.d/:/etc/mysql/conf.d/:ro
       - catboard_db_data:/var/lib/mysql
     ports:
-      - "127.0.0.1:37306:3306"
+      - "127.0.0.1:3306:3306"
 
 volumes:
   catboard_db_data:
