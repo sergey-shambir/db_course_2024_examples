@@ -10,26 +10,31 @@ const DATABASE_CONFIG_NAME = 'catboard.db.ini';
  */
 function connectDatabase(): PDO
 {
-    $configPath = getConfigPath(DATABASE_CONFIG_NAME);
-    if (!file_exists($configPath))
+    static $connection = null;
+    if ($connection === null)
     {
-        throw new RuntimeException("Could not find database configuration at '$configPath'");
-    }
-    $config = parse_ini_file($configPath);
-    if (!$config)
-    {
-        throw new RuntimeException("Failed to parse database configuration from '$configPath'");
-    }
+        $configPath = getConfigPath(DATABASE_CONFIG_NAME);
+        if (!file_exists($configPath))
+        {
+            throw new RuntimeException("Could not find database configuration at '$configPath'");
+        }
+        $config = parse_ini_file($configPath);
+        if (!$config)
+        {
+            throw new RuntimeException("Failed to parse database configuration from '$configPath'");
+        }
 
-    // Проверяем наличие всех ключей конфигурации.
-    $expectedKeys = ['dsn', 'user', 'password'];
-    $missingKeys = array_diff($expectedKeys, array_keys($config));
-    if ($missingKeys)
-    {
-        throw new RuntimeException('Wrong database configuration: missing options ' . implode(' ', $missingKeys));
-    }
+        // Проверяем наличие всех ключей конфигурации.
+        $expectedKeys = ['dsn', 'user', 'password'];
+        $missingKeys = array_diff($expectedKeys, array_keys($config));
+        if ($missingKeys)
+        {
+            throw new RuntimeException('Wrong database configuration: missing options ' . implode(' ', $missingKeys));
+        }
 
-    return new PDO($config['dsn'], $config['user'], $config['password']);
+        $connection = new PDO($config['dsn'], $config['user'], $config['password']);
+    }
+    return $connection;
 }
 
 /**
@@ -158,6 +163,7 @@ function getRecentPostsFromDatabase(PDO $connection, int $limit): array
  * @param PDO $connection
  * @param int $id
  * @return null|array{
+ *     id: int,
  *     path:string,
  *     width:int,
  *     height:int,
