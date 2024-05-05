@@ -11,12 +11,14 @@
 
 ## Запуск тестов примера в Linux с помощью Docker
 
-1. Установить docker и docker-compose
-2. Запустить контейнеры по инструкции из файла `docs/docker.md`
-3. Либо выполнить Bash-скрипт `docker/bin/tree-of-life-db-init`, либо открыть в MySQL Workbench и выполнить последовательно SQL запросы из файлов
+1. Установить PHP 8.2
+2. Установить docker и docker-compose
+3. Запустить контейнер MySQL по инструкции из файла `docs/docker.md`
+4. Установить PHP-пакеты — `composer install`
+5. Инициализировать схему — либо выполнить Bash-скрипт `docker/bin/tree-of-life-db-init`, либо открыть в MySQL Workbench и выполнить последовательно SQL запросы из файлов
     - `data/02_init_schema.sql`
     - `data/03_nested_set_routines.sql`
-4. Запустить `vendor/bin/phpunit`
+6. Запустить тесты — `composer tests`
 
 ## Запуск тестов примера в Windows или в Linux без Docker
 
@@ -24,11 +26,12 @@
 
 1. Установить MySQL 8 и PHP 8.2
 2. Запустить MySQL server
-3. Открыть в MySQL Workbench и выполнить последовательно SQL запросы из двух файлов:
+3. Установить PHP-пакеты — `composer install`
+4. Инициализировать схему — открыть в MySQL Workbench и выполнить последовательно SQL запросы из двух файлов:
     - `data/01_create_database_and_user.sql`
     - `data/02_init_schema.sql`
     - `data/03_nested_set_routines.sql`
-4. Запустить `vendor/bin/phpunit`
+5. Запустить тесты — `composer tests`
 
 ## Запуск только определённых тестов
 
