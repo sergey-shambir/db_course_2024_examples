@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+set -o errexit
+
+PARENT_DIR=$(dirname "$(readlink -f "$0")")
+PROJECT_ROOT_DIR=$(dirname "$(dirname "$PARENT_DIR")")
+
+execute_sql_script() {
+  local SQL_SCRIPT=$1
+
+  if [ ! -f "$PROJECT_ROOT_DIR/$SQL_SCRIPT" ]; then
+    echo "SQL script '$SQL_SCRIPT' not found at directory '$PROJECT_ROOT_DIR'" 1>&2
+    exit 1
+  fi
+
+  echo "Executing SQL script '$SQL_SCRIPT'..."
+  docker exec \
+    --interactive \
+    tree-of-life-db mysql -utree-of-life-app -pA0h3dIzdy8 tree_of_life < "$PROJECT_ROOT_DIR/$SQL_SCRIPT"
+  echo "Executed SQL script '$SQL_SCRIPT' OK"
+}
+
+execute_sql_script data/02_init_schema.sql
+execute_sql_script data/03_nested_set_routines.sql
+
+echo "Completed OK"

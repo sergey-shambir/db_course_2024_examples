@@ -1,19 +1,19 @@
 <?php
 declare(strict_types=1);
 
-namespace Tests\App\TreeOfLife\NestedSet;
+namespace Tests\App\Component\TreeOfLife\AdjacencyList;
 
 use App\TreeOfLife\Data\TreeOfLifeNodeData;
 use App\TreeOfLife\IO\TreeOfLifeLoader;
 use App\TreeOfLife\Model\TreeOfLifeNode;
 use App\TreeOfLife\Model\TreeOfLifeNodeDataInterface;
-use App\TreeOfLife\Service\NestedSet\NestedSetTreeService;
+use App\TreeOfLife\Service\AdjacencyList\AdjacencyListTreeService;
 use App\TreeOfLife\Service\TreeOfLifeServiceInterface;
 use Tests\App\Common\AbstractDatabaseTestCase;
 
-class NestedSetTreeTest extends AbstractDatabaseTestCase
+class AdjacencyListTreeTest extends AbstractDatabaseTestCase
 {
-    private const DATA_DIR = __DIR__ . '/../../../data';
+    private const DATA_DIR = __DIR__ . '/../../../../data';
     private const NODES_CSV_PATH = self::DATA_DIR . '/treeoflife_nodes.csv';
     private const LINKS_CSV_PATH = self::DATA_DIR . '/treeoflife_links.csv';
 
@@ -23,10 +23,10 @@ class NestedSetTreeTest extends AbstractDatabaseTestCase
     {
         parent::setUp();
 
-        $this->getConnection()->execute('DELETE FROM tree_of_life_nested_set');
+        $this->getConnection()->execute('DELETE FROM tree_of_life_adjacency_list');
         $this->getConnection()->execute('DELETE FROM tree_of_life_node');
 
-        $this->service = new NestedSetTreeService($this->getConnection());
+        $this->service = new AdjacencyListTreeService($this->getConnection());
     }
 
     public function testSaveAndLoadTree(): void
@@ -132,8 +132,6 @@ class NestedSetTreeTest extends AbstractDatabaseTestCase
 
         $parent = $this->service->getParentNode(80000);
         $this->assertTreeNode(new TreeOfLifeNodeData(1, 'Life on Earth', false, 0), $parent);
-
-        $this->service->validateNestedSetData();
     }
 
     public function testMoveNode(): void
@@ -152,8 +150,6 @@ class NestedSetTreeTest extends AbstractDatabaseTestCase
         // Assert
         $parent = $this->service->getParentNode(14697);
         $this->assertTreeNode(new TreeOfLifeNodeData(2537, 'Eurypterida', true, 0), $parent);
-
-        $this->service->validateNestedSetData();
     }
 
     public function testDeleteSubTree(): void
@@ -189,8 +185,6 @@ class NestedSetTreeTest extends AbstractDatabaseTestCase
         $this->assertTreeNode(new TreeOfLifeNodeData(2536, 'Arachnida', false, 0), $children[0]);
         $this->assertTreeNode(new TreeOfLifeNodeData(2538, 'Xiphosura', false, 0), $children[1]);
         $this->assertTreeNode(new TreeOfLifeNodeData(2539, 'Pycnogonida', false, 0), $children[2]);
-
-        $this->service->validateNestedSetData();
     }
 
     private function assertTreeNode(TreeOfLifeNodeDataInterface $expected, TreeOfLifeNodeDataInterface $node): void
