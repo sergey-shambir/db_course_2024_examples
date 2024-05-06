@@ -145,7 +145,7 @@ class NestedSetTreeService implements TreeOfLifeServiceInterface
 
     public function saveTree(TreeOfLifeNode $root): void
     {
-        $allNodes = $root->listNodes();
+        $allNodes = $root->getDescendants();
         $allNestedSetData = self::buildNestedSetData($root);
 
         // Вместо записи всех узлов за один запрос делим массив на части.

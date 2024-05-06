@@ -11,10 +11,9 @@ use RuntimeException;
 
 class TreeOfLifeLoader
 {
-    private const NODES_CSV_HEADER = [
-        'node_id', 'node_name', 'child_nodes', 'leaf_node', 'tolorg_link', 'extinct', 'confidence', 'phylesis'
-    ];
-
+    /**
+     * @var TreeOfLifeNode[]
+     */
     private array $nodes = [];
     private ?TreeOfLifeNode $treeRoot;
 

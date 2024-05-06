@@ -76,6 +76,20 @@ final class TreeOfLifeNode implements TreeOfLifeNodeDataInterface
     }
 
     /**
+     * Возвращает узлы дерева или поддерева в виде списка, полученного в результате обхода в глубину
+     *
+     * @return TreeOfLifeNode[]
+     */
+    public function getDescendants(): array
+    {
+        $nodes = [];
+        $this->walk(function (TreeOfLifeNode $node) use (&$nodes) {
+            $nodes[] = $node;
+        });
+        return $nodes;
+    }
+
+    /**
      * Безопасное добавление дочернего узла в дерево.
      * Выполняет проверки целостности.
      *
@@ -116,20 +130,6 @@ final class TreeOfLifeNode implements TreeOfLifeNodeDataInterface
     {
         $this->children[] = $child;
         $child->parent = $this;
-    }
-
-    /**
-     * Возвращает узлы дерева или поддерева в виде списка, полученного в результате обхода в глубину
-     *
-     * @return TreeOfLifeNode[]
-     */
-    public function listNodes(): array
-    {
-        $nodes = [];
-        $this->walk(function (TreeOfLifeNode $node) use (&$nodes) {
-            $nodes[] = $node;
-        });
-        return $nodes;
     }
 
     /**

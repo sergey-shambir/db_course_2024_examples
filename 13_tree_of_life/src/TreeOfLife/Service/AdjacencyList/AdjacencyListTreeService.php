@@ -155,7 +155,7 @@ class AdjacencyListTreeService implements TreeOfLifeServiceInterface
 
     public function saveTree(TreeOfLifeNode $root): void
     {
-        $allNodes = $root->listNodes();
+        $allNodes = $root->getDescendants();
 
         // Вместо записи всех узлов за один запрос делим массив на части.
         /** @var TreeOfLifeNode[] $nodes */
