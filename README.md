@@ -9,3 +9,5 @@
 | 11. Интеграционное тестирование | [11_wiki_backend_with_tests](11_wiki_backend_with_tests/README.md) |
 | 11. Интеграционное тестирование | [11_php_catboard_with_tests](11_php_catboard_with_tests/README.md) |
 | 12. Транзакции и блокировки | [12_billing_example](12_billing_example/README.md) |
+| 13. Деревья в базах данных | [13_tree_of_life](13_tree_of_life/README.md) |
+| 15. Миграции базы данных | [5_wiki_backend_doctrine](5_wiki_backend_doctrine/README.md) |

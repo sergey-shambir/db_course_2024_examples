@@ -1,1 +1,6 @@
-sandbox/
+/.idea/
+/.vscode/
+
+/sandbox/
+/vendor/
+

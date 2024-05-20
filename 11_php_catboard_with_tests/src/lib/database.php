@@ -194,7 +194,7 @@ function findImageInDatabase(PDO $connection, int $id): ?array
  * @param int[] $ids - список ID изображений
  * @return array<int,array> - словарь, отображающий ID изображения на массив с параметрами изображения
  */
-function getImageToIdMapFromDatabase(PDO $connection, array $ids): array
+function getImageByIdMapFromDatabase(PDO $connection, array $ids): array
 {
     if (!$ids)
     {

@@ -1,8 +1,0 @@
-**/*.*
-**/.*
-!.gitignore
-!php.xml
-!vcs.xml
-!/inspectionProfiles/*.*
-!/codeStyles/*.*
-!/scopes/*.*

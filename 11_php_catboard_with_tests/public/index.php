@@ -17,7 +17,7 @@ function handleShowPost(): void
 
     // Получаем словарь, отображащий ID изображения на его параметры
     $imageIds = array_column($posts, 'image_id');
-    $imageByIdMap = getImageToIdMapFromDatabase($connection, $imageIds);
+    $imageByIdMap = getImageByIdMapFromDatabase($connection, $imageIds);
 
     $postViews = [];
     foreach ($posts as $postData)
