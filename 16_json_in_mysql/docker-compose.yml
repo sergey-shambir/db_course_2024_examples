@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  json-demo-db:
+    image: mysql:8.0.32
+    container_name: json-demo-db
+    hostname: json-demo-db
+    environment:
+      - MYSQL_ROOT_PASSWORD=Oht5uu
+      - MYSQL_USER=json-demo
+      - MYSQL_PASSWORD=IeCi0u
+      - MYSQL_DATABASE=json_demo
+    volumes:
+      - $PWD/docker/config/json-demo-db/:/etc/mysql/conf.d/:ro
+      - json_demo_db_data:/var/lib/mysql
+    ports:
+      - "127.0.0.1:3306:3306"
+
+volumes:
+  json_demo_db_data:

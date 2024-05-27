@@ -1,0 +1,13 @@
+{
+  "first_name": "Пётр",
+  "last_name": "Мелехов",
+  "emails": [
+    "p.melehov@trade.local",
+    "petr.melehov@trade.local"
+  ],
+  "phones": [
+    "+7-861-202-02-02",
+    "+7-861-202-03-03"
+  ],
+  "manager_name": "Мирон Коршунов"
+}
