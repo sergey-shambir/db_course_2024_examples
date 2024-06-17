@@ -32,24 +32,53 @@ class ArticleTest extends TestCase
         );
 
         // Шаг 2. Act (выполнение действия)
-        $article->edit(
-            userId: $secondAuthorId,
-            title: 'B+ деревья',
-            content: <<<TEXT
+        $content = <<<TEXT
                     B+-деревья — это основа физической структуры реляционных баз данных.
                     
                     Именно они ответственны за сочетание двух характеристик реляционных СУБД:
                     
                     - Высокая скорость работы как для небольших запросов, так и для больших 
                     - Устойчивость данных к перезагрузке при условии сохранности внешнего диска
-                    TEXT,
+                    TEXT;
+        $article->edit(
+            userId: $secondAuthorId,
+            title: 'B+ деревья',
+            content: $content,
             tags: ['MySQL', 'B+-деревья', 'Индексы'],
         );
 
         // Шаг 3. Assert (проверка утверждений)
-        $this->assertEquals('B+ деревья', $article->getTitle());
-        $this->assertEquals(['MySQL', 'B+-деревья', 'Индексы'], $article->getTags());
-        $this->assertEquals($firstAuthorId, $article->getCreatedBy());
-        $this->assertEquals($secondAuthorId, $article->getUpdatedBy());
+        $this->assertArticle(
+            $article,
+            title: 'B+ деревья',
+            createdBy: $firstAuthorId,
+            tags: ['MySQL', 'B+-деревья', 'Индексы'],
+            content: $content,
+            updatedBy: $secondAuthorId
+        );
+    }
+
+    /**
+     * @param Article $article
+     * @param string $title
+     * @param int $createdBy
+     * @param string[] $tags
+     * @param string $content
+     * @param int|null $updatedBy
+     * @return void
+     */
+    public function assertArticle(
+        Article $article,
+        string $title,
+        int $createdBy,
+        array $tags = [],
+        string $content = '',
+        int $updatedBy = null): void
+    {
+        $this->assertEquals($title, $article->getTitle());
+        $this->assertEquals($tags, $article->getTags());
+        $this->assertEquals($createdBy, $article->getCreatedBy());
+        $this->assertEquals($updatedBy, $article->getUpdatedBy());
+        $this->assertEquals($content, $article->getContent());
     }
 }

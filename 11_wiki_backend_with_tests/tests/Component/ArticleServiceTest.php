@@ -35,9 +35,7 @@ class ArticleServiceTest extends AbstractDatabaseTestCase
 
         // Шаг 3. Assert
         $article = $service->getArticle($articleId);
-        $this->assertEquals('(Черновик) B+ деревья', $article->getTitle());
-        $this->assertArticleTags(['MySQL', 'PostgreSQL'], $article);
-        $this->assertEquals($firstAuthorId, $article->getCreatedBy());
+        $this->assertArticle($article, title: '(Черновик) B+ деревья', createdBy: $firstAuthorId, tags: ['MySQL', 'PostgreSQL']);
     }
 
     public function testCreateEditAndDeleteArticle(): void
@@ -56,35 +54,42 @@ class ArticleServiceTest extends AbstractDatabaseTestCase
 
         // Шаг 3. Assert
         $article = $service->getArticle($articleId);
-        $this->assertEquals('(Черновик) B+ деревья', $article->getTitle());
-        $this->assertArticleTags(['MySQL', 'PostgreSQL'], $article);
-        $this->assertEquals($firstAuthorId, $article->getCreatedBy());
+        $this->assertArticle($article,
+            title: '(Черновик) B+ деревья',
+            createdBy: $firstAuthorId,
+            tags: ['MySQL', 'PostgreSQL']
+        );
 
         // Шаг 1. Arrange
         $secondAuthorId = 17;
 
         // Шаг 2. Act
-        $service->editArticle(new EditArticleParams(
-            id: $articleId,
-            userId: $secondAuthorId,
-            title: 'B+ деревья',
-            content: <<<TEXT
+        $content = <<<TEXT
                     B+-деревья — это основа физической структуры реляционных баз данных.
                     
                     Именно они ответственны за сочетание двух характеристик реляционных СУБД:
                     
                     - Высокая скорость работы как для небольших запросов, так и для больших 
                     - Устойчивость данных к перезагрузке при условии сохранности внешнего диска
-                    TEXT,
+                    TEXT;
+        $service->editArticle(new EditArticleParams(
+            id: $articleId,
+            userId: $secondAuthorId,
+            title: 'B+ деревья',
+            content: $content,
             tags: ['MySQL', 'B+-деревья', 'Индексы'],
         ));
 
         // Шаг 3. Assert
         $article = $service->getArticle($articleId);
-        $this->assertEquals('B+ деревья', $article->getTitle());
-        $this->assertArticleTags(['MySQL', 'B+-деревья', 'Индексы'], $article);
-        $this->assertEquals($firstAuthorId, $article->getCreatedBy());
-        $this->assertEquals($secondAuthorId, $article->getUpdatedBy());
+        $this->assertArticle(
+            $article,
+            title: 'B+ деревья',
+            createdBy: $firstAuthorId,
+            content: $content,
+            tags: ['MySQL', 'B+-деревья', 'Индексы'],
+            updatedBy: $secondAuthorId
+        );
 
         // Шаг 2. Act
         $service->deleteArticle($articleId);
@@ -121,8 +126,11 @@ class ArticleServiceTest extends AbstractDatabaseTestCase
 
         // Шаг 3. Assert
         $article = $service->getArticle($thirdArticleId);
-        $this->assertEquals('План выполнения запроса', $article->getTitle());
-        $this->assertArticleTags(['MySQL', 'EXPLAIN', 'SQL'], $article);
+        $this->assertArticle($article,
+            title: 'План выполнения запроса',
+            createdBy: $authorId,
+            tags: ['MySQL', 'EXPLAIN', 'SQL']
+        );
 
         $this->assertThrows(
             static fn() => $service->getArticle($firstArticleId),
@@ -146,6 +154,22 @@ class ArticleServiceTest extends AbstractDatabaseTestCase
             $actualExceptionClass = $e::class;
         }
         $this->assertEquals($exceptionClass, $actualExceptionClass, "$exceptionClass exception should be thrown");
+    }
+
+    private function assertArticle(
+        Article $article,
+        string $title,
+        int $createdBy,
+        string $content = '',
+        array $tags = [],
+        ?int $updatedBy = null,
+    ): void
+    {
+        $this->assertArticleTags($tags, $article);
+        $this->assertEquals($createdBy, $article->getCreatedBy(), 'article created by');
+        $this->assertEquals($title, $article->getTitle(), 'article title');
+        $this->assertEquals($content, $article->getContent(), 'article content');
+        $this->assertEquals($updatedBy, $article->getUpdatedBy(), 'article updated by');
     }
 
     private function assertArticleTags(array $expected, Article $article): void
